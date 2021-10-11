@@ -28,35 +28,76 @@ describe('app routes', () => {
       return client.end(done);
     });
 
-    test('returns animals', async() => {
+
+    test('creates a todo', async() => {
+      const posting = {
+        todo: 'bills',
+      };
 
       const expectation = [
         {
-          'id': 1,
-          'name': 'bessie',
-          'cool_factor': 3,
-          'owner_id': 1
-        },
-        {
-          'id': 2,
-          'name': 'jumpy',
-          'cool_factor': 4,
-          'owner_id': 1
-        },
-        {
-          'id': 3,
-          'name': 'spot',
-          'cool_factor': 10,
-          'owner_id': 1
+          id: expect.any(Number),
+          todo: 'bills',
+          completed: 'false',
+          owner_id: expect.any(Number)
         }
       ];
 
       const data = await fakeRequest(app)
-        .get('/animals')
+        .post('/api/todos')
+        .send(posting)
+        .set('Authorization', token)
         .expect('Content-Type', /json/)
         .expect(200);
 
       expect(data.body).toEqual(expectation);
     });
+
+    test('returns todos', async() => {
+
+      const expectation = [
+        {
+          id: expect.any(Number),
+          todo: 'bills',
+          completed: 'false',
+          owner_id: expect.any(Number)
+        }
+      ];
+
+      const data = await fakeRequest(app)
+        .get('/api/todos')
+        .set('Authorization', token)
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(data.body).toEqual(expectation);
+    });
+
+    test('updates a todo', async() => {
+      const putting = {
+        completed: 'true'
+      };
+
+      const expectation = [
+        {
+          id: expect.any(Number),
+          todo: 'bills',
+          completed: 'true',
+          owner_id: expect.any(Number)
+        }
+      ];
+
+      const data = await fakeRequest(app)
+        .put('/api/todos/4')
+        .send(putting)
+        .set('Authorization', token)
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(data.body).toEqual(expectation);
+    });
+
+
+
   });
 });
