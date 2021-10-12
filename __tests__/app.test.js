@@ -97,7 +97,34 @@ describe('app routes', () => {
       expect(data.body).toEqual(expectation);
     });
 
+    test('deletes a todo', async() => {
 
+      const expectation = [
+        {
+          id: expect.any(Number),
+          todo: 'bills',
+          completed: 'true',
+          owner_id: expect.any(Number)
+        }
+      ];
+
+      const data = await fakeRequest(app)
+        .delete('/api/todos/4')
+        .set('Authorization', token)
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(data.body).toEqual(expectation);
+
+      const expectationAfter = [];
+      const dataAfter = await fakeRequest(app)
+        .get('/api/todos')
+        .set('Authorization', token)
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(dataAfter.body).toEqual(expectationAfter);
+    });
 
   });
 });
